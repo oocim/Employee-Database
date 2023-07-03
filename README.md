@@ -1,2 +1,2 @@
 # Employee-Database
-C++ Employee Database System with Payroll Management
+C++ Employee Database System with Payroll Management.
