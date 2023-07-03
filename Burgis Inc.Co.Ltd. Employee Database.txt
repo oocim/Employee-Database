@@ -1,0 +1,40 @@
+Burgis Inc.Co.Ltd. Employee Database
+
+Menu
+[A] List of Employees
+	display_employees()
+		[1] View Info (sort by ID)
+			* Name
+			* Employee ID
+				display_details()
+				
+[B] Employee Details (array -> linked list)
+	[1] Add Employee
+		add()
+			* Name
+			* Birthdate (mm/dd/yyyy)
+			* Contact Number (len(number)!= 11) error)
+			* Address
+			* Bank Info ()
+			* Starting Salary (rate/hrs of work)
+
+	[2] Edit Employee Details (edit array in linked list)
+		edit()
+			* kung anong ieedit
+
+[C] Fire Employee
+	*Name
+		del(name)
+[D] Payroll
+	[1] Display Employee Salary
+		* Total Salary (salary, bonus, deduction)
+			display_salary()
+
+	[2] Edit Employee Salary
+		edit_salary()
+			* Salary type (hourly/daily)
+			* Salary rate (magkano)
+			* Bonus salary
+			* Deductions
+
+
