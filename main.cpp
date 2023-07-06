@@ -471,7 +471,7 @@ int main(){
                 employeeList.manageEmployee();
                 break;
             case 'C':
-                // TODO: Implement logic for processing payroll
+                employeeList.managePayroll();
                 system("pause");
                 system("cls");
                 break;
