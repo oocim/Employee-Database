@@ -33,7 +33,7 @@ public:
     EmployeeList() : head(nullptr), tail(nullptr), nextId(1) {}
 
     void addEmployee(const std::string& name, const std::string& bday, std::string& gender, int age, std::string& civil, const std::string& position, std::string& status, std::string& department, std::string& phone, const std::string& email, const std::string& address, const std::string& bank, double salary) {
-        Employee* newEmployee = new Employee(nextId, name, bday, gender, age, civil, position, status, department, phone, email, address, bank, salary);
+        Employee* newEmployee = new Employee(nextId, name, bday, gender, age, civil, position, department, status, phone, email, address, bank, salary);
         nextId++;
 
         if (head == nullptr) {
@@ -258,6 +258,22 @@ public:
         }
     }
 
+    int calculate_salary(int salary)
+    {
+        int SSS, PhilHealth, tax, totaldeduc;
+        SSS = salary * 0.05;
+        PhilHealth = salary * 0.05;
+        tax = salary * 0.05;
+
+        totaldeduc = SSS + PhilHealth + tax;
+        int netSalary = salary - totaldeduc;
+
+        std::cout << "Total Deductions: " << totaldeduc << std::endl;
+        std::cout << "Net Salary: " << netSalary << std::endl;
+
+        return netSalary;
+    }
+
 
 
     void manageEmployee(){
@@ -355,7 +371,6 @@ public:
     {
         system("cls");
         char ch;
-        int totaldeduc = 0;
 
         do {
             std::cout << "Manage Employees" << std::endl << std::endl;
@@ -383,62 +398,30 @@ public:
                     std::cout << "Enter Employee ID: ";
                     int idd;
                     std::cin >> idd;
-                    std::cout << "Choose if Hourly or Monthly:" << std::endl;
-                    std::cout << "A. Monthly Rate" << std::endl;
-                    std::cout << "B. Hourly Rate" << std::endl;
-                    std::cout << "C. Exit" << std::endl;
-                    std::cin >> ch;
-
+                    Employee* current = head;
                     int rate, days, salary;
-                    int SSS, PhilHealth, tax;
-
-                    switch (toupper(ch))
+                    while (current != nullptr) 
                     {
-                        case 'A':
+                        if(current->id == idd)
                         {
-                            std::cout << "Enter Rate: ";
-                            std::cin >> rate;
-                            salary = rate;
-                            SSS = salary * 0.05;
-                            PhilHealth = salary * 0.05;
-                            tax = salary * 0.5;
-
-                            totaldeduc = SSS + PhilHealth + tax;
-                            salary -= totaldeduc;
-                            break;
+                            std::string status = current->status;
+                            if (status == "PART TIME")
+                            {
+                                std::cout << "Enter Rate: ";
+                                std::cin >> rate;
+                                salary = rate * 30 * 8;
+                            }
+                            else if(status == "FULL TIME")
+                            {
+                                std::cout << "Enter Rate: ";
+                                std::cin >> rate;
+                            
+                                salary = rate * 30;
+                            }
                         }
-                        case 'B':
-                        {
-                            std::cout << "Enter Rate: ";
-                            std::cin >> rate;
-                            std::cout << "Enter Days of Work: ";
-                            std::cin >> days;
-
-                            salary = rate * days;
-                            break;
-                        }
-                        case 'C':
-                        {
-                            system("pause");
-                            system("cls");
-                            break;
-                        }
-                        default:
-                        {
-                            std::cout << "Invalid option selected!" << std::endl;
-                            continue; // Continue the inner loop
-                        }
+                        current = current->next;
                     }
-
-                    SSS = salary * 0.05;
-                    PhilHealth = salary * 0.05;
-                    tax = salary * 0.5;
-
-                    totaldeduc = SSS + PhilHealth + tax;
-                    salary -= totaldeduc;
-
-                    std::cout << "Total Deductions: " << totaldeduc << std::endl;
-                    std::cout << "Total Salary: " << salary << std::endl;
+                    salary = calculate_salary(salary);
                     update_salary(idd, salary);
                     break;
                 }
@@ -487,7 +470,7 @@ int main(){
                     std::cout << "Enter Employee" << std::endl;
                     int search;
                     std::cin >> search;
-                    employeeList.searchEmployee(search);
+                    employeeList.searchEmployee(search); //NEED ERROR HANDLING
                 }
                 }while(toupper(c) != 'B');
 
