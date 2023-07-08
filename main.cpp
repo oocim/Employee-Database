@@ -45,7 +45,10 @@ public:
             tail = newEmployee;
         }
     }
-
+ 	
+ 	hasEmployees() const {
+    return head != nullptr;
+	}
 
 
     void deleteEmployee(int id) {
@@ -78,15 +81,35 @@ public:
     }
 
     void displayEmployees() const {
-        Employee* current = head;
-        while (current != nullptr) {
-            std::cout << current->id << ") Name: " << current->name << std::endl;
-            current = current->next;
-        }
+    if (!hasEmployees()) {
+        std::cout << "The employee list is empty." << std::endl;
+        return;
     }
+    
+    Employee* current = head;
+    while (current != nullptr) {
+        std::cout << current->id << ") Name: " << current->name << std::endl;
+        current = current->next;
+    }
+    
+    char c;
+    do {
+        std::cout << "[A] View Employee Details" << std::endl;
+        std::cout << "[B] Back" << std::endl;
+        std::cin >> c;
+        if (toupper(c) == 'A') {
+            std::cout << "Enter Employee ID: ";
+            int search;
+            std::cin >> search;
+            searchEmployee(search); 
+            break; 
+        }
+    } while (toupper(c) != 'B');
+}
+
 
     void searchEmployee(int id) const {
-            Employee* current = head;
+			Employee* current = head;
             bool found = false;
 
             while (current != nullptr) {
@@ -118,8 +141,10 @@ public:
         }
 
         void editEmployee(int& id) {
-
-        Employee* current = head;
+        if (!hasEmployees()) {
+        	std::cout << "The employee list is empty." << std::endl;
+    	}
+		Employee* current = head;
         bool found = false;
 
         while (current != nullptr) {
@@ -341,7 +366,13 @@ public:
                     break;
                 }
                 case 'B':
-                    int id;
+                    if (!hasEmployees()) {
+                    std::cout << "The employee list is empty." << std::endl;
+                    system("pause");
+                    system("cls");
+                    break;
+                	}
+					int id;
                     std::cout << "Enter Employee ID" << std::endl;
                     std::cin >> id;
                     editEmployee(id);
@@ -350,7 +381,13 @@ public:
                     break;
 
                 case 'C':
-                    int search;
+                    if (!hasEmployees()) {
+                    std::cout << "The employee list is empty." << std::endl;
+                    system("pause");
+                    system("cls");
+                    break;
+                	}
+					int search;
                     std::cout << "Enter Employee ID" << std::endl;
                     std::cin >> search;
                     deleteEmployee(search);
@@ -382,7 +419,12 @@ public:
             switch (toupper(ch))
             {
                 case 'A':
-                {
+                {	if (!hasEmployees()) {
+                    std::cout << "The employee list is empty." << std::endl;
+                    system("pause");
+                    system("cls");
+                    break;
+                	}
                     system("cls");
                     std::cout << "Enter Employee ID: ";
                     int idd;
@@ -393,7 +435,12 @@ public:
                     break;
                 }
                 case 'B':
-                {
+                {	if (!hasEmployees()) {
+                    std::cout << "The employee list is empty." << std::endl;
+                    system("pause");
+                    system("cls");
+                    break;
+                	}
                     system("cls");
                     std::cout << "Enter Employee ID: ";
                     int idd;
@@ -461,19 +508,6 @@ int main(){
                 std::cout << "Current Employees" << std::endl;
                 employeeList.displayEmployees();
                 std::cout << std::endl;
-                char c;
-                do{
-                std::cout << "[A] View Employee Details" << std::endl;
-                std::cout << "[B] Back" << std::endl;
-                std::cin >> c;
-                if(toupper(c) == 'A'){
-                    std::cout << "Enter Employee" << std::endl;
-                    int search;
-                    std::cin >> search;
-                    employeeList.searchEmployee(search); //NEED ERROR HANDLING
-                }
-                }while(toupper(c) != 'B');
-
                 system("pause");
                 system("cls");
                 break;
