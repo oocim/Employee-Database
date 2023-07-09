@@ -135,6 +135,7 @@ public:
     }
 
     void deleteEmployee(int id) {
+        system("CLS");
         if (head == nullptr) {
             std::cout << "Employee not found!" << std::endl;
             return;
@@ -166,39 +167,46 @@ public:
     void displayEmployees() const {
         char chh;
         int idd;
-
+        
         if (!hasEmployees()) {
             std::cout << "The employee list is empty." << std::endl;
             return;
         }
-
+        do{
+        system("CLS");
         Employee* current = head;
+        std::cout << "Current Employees" << std::endl;
         while (current != nullptr) {
             std::cout << current->id << ") Name: " << current->name << std::endl;
             current = current->next;
         }
 
         std::cout << std::endl << std::endl;
-        do{
+
         std::cout << "[A] Display Employee Details" << std::endl;
         std::cout << "[B] Exit" << std::endl;
 
         std::cin >> chh;
+        system("CLS");
             switch(toupper(chh)){
                 case 'A':{
                     std::cout << "Enter Employee ID" << std::endl;
                     std::cin >> idd;
+                    system("CLS");
                     searchEmployee(idd);
+                    system("pause");
                     break;
                 }
                 case 'B':{
                 break;
                 }
             }
+            system("CLS");
         }while(toupper(chh) != 'B');
     }
 
     void searchEmployee(int id) const {
+        system("CLS");
         Employee* current = head;
         bool found = false;
 
@@ -236,10 +244,11 @@ public:
 
     void editEmployee(int id) {
         if (!hasEmployees()) {
+            system("CLS");
             std::cout << "The employee list is empty." << std::endl;
             return;
         }
-
+        system("CLS");
         Employee* current = head;
         bool found = false;
 
@@ -426,10 +435,13 @@ public:
         if (!found) {
             std::cout << "Employee not found!" << std::endl;
         }
+        system("PAUSE");
+        system("CLS");
     }
 
     void manageEmployee() {
         if (!isLoggedIn()) {
+            system("CLS");
             std::cout << "Please login to access employee management." << std::endl;
             login();
             if (!isLoggedIn()) {
@@ -439,6 +451,7 @@ public:
 
         char ch;
         do {
+            system("CLS");
             std::cout << "Manage Employees" << std::endl << std::endl;
             std::cout << "[A] Add Employee" << std::endl;
             std::cout << "[B] Edit Employee Information" << std::endl;
@@ -448,6 +461,7 @@ public:
 
             switch (toupper(ch)) {
                 case 'A': {
+                    system("CLS");
                     std::cout << "Employee Information Form" << std::endl;
                     std::cin.ignore();
                     std::string name;
@@ -503,27 +517,34 @@ public:
 
                     addEmployee(name, bday, gender, age, civil, position, department, status, phone, email, address, bank, salary, daysOfWork, hoursOfWork);
                     break;
+                    std::cout << "Employee Added Succesfully!" << std::endl;
                 }
                 case 'B': {
                     if (!hasEmployees()) {
                         std::cout << "The employee list is empty." << std::endl;
-                        return;
+                        break;
                     }
+                    system("CLS");
                     int id;
                     std::cout << "Enter Employee ID: ";
                     std::cin >> id;
                     editEmployee(id);
+                    std::cout << std::endl << std::endl;
+                    std::cout << "Employee Information Updated" << std::endl;
+                    system("PAUSE");
                     break;
                 }
                 case 'C': {
                     if (!hasEmployees()) {
                         std::cout << "The employee list is empty." << std::endl;
-                        return;
+                        break;
                     }
+                    system("CLS");
                     int id;
                     std::cout << "Enter Employee ID: ";
                     std::cin >> id;
                     deleteEmployee(id);
+                    system("PAUSE");
                     break;
                 }
                 case 'D':
@@ -531,11 +552,13 @@ public:
                 default:
                     std::cout << "Invalid option selected!" << std::endl;
             }
+            system("CLS");
         } while (toupper(ch) != 'D');
     }
 
     void managePayroll() {
         if (!isLoggedIn()) {
+            system("CLS");
             std::cout << "Please login to access payroll management." << std::endl;
             login();
             if (!isLoggedIn()) {
@@ -545,6 +568,7 @@ public:
 
         char ch;
         do {
+            system("CLS");
             std::cout << "Manage Payroll" << std::endl << std::endl;
             std::cout << "[A] Display Employee Salary" << std::endl;
             std::cout << "[B] Update Employee Salary" << std::endl;
@@ -555,8 +579,9 @@ public:
                 case 'A': {
                     if (!hasEmployees()) {
                         std::cout << "The employee list is empty." << std::endl;
-                        return;
+                        break;
                     }
+                    system("CLS");
                     std::cout << "Enter Employee ID: ";
                     int id;
                     std::cin >> id;
@@ -566,8 +591,9 @@ public:
                 case 'B': {
                     if (!hasEmployees()) {
                         std::cout << "The employee list is empty." << std::endl;
-                        return;
+                        break;
                     }
+                    system("CLS");
                     std::cout << "Enter Employee ID: ";
                     int id;
                     std::cin >> id;
@@ -583,6 +609,7 @@ public:
                     std::cout << "Invalid option selected!" << std::endl;
                     break;
             }
+            system("CLS");
         } while (toupper(ch) != 'C');
     }
 };
@@ -591,11 +618,12 @@ int main() {
     char choice;
     EmployeeList employeeList;
 
-    //employeeList.addEmployee("Juan dela Cruz", "1990-05-15", "Male", 31, "Single", "Software Engineer", "IT Department", "FULL TIME", "09123456789", "juan@example.com", "Manila, Philippines", "0123456789", 50000);
+    employeeList.addEmployee("Juan dela Cruz", "1990-05-15", "Male", 31, "Single", "Software Engineer", "IT Department", "FULL TIME", "09123456789", "juan@example.com", "Manila, Philippines", "0123456789", 50000);
     //employeeList.addEmployee("Maria Santos", "1995-09-20", "Female", 26, "Married", "Data Analyst", "Finance Department", "PART TIME", "09123456788", "maria@example.com", "Quezon City, Philippines", "9876543210", 30000, 3, 4);
 
 
     do {
+        system("CLS");
         std::cout << "Employee Database" << std::endl << std::endl;
         std::cout << "Menu" << std::endl << std::endl;
         std::cout << "[A] List of Employees" << std::endl;
@@ -617,18 +645,24 @@ int main() {
                 employeeList.managePayroll();
                 break;
             case 'D':
+                system("CLS");
+                std::cout << "ADMIN LOG-IN" << std::endl;
                 employeeList.login();
                 break;
             case 'E':
-                employeeList.logout();
+                system("CLS");
+                employeeList.logout();       
                 break;
             case 'F':
+                system("CLS");
                 std::cout << "Shutting down..." << std::endl;
                 break;
             default:
                 std::cout << "Invalid option selected!" << std::endl;
                 break;
         }
+        system("PAUSE");
+        system("CLS");
     } while (toupper(choice) != 'F');
 
     return 0;
