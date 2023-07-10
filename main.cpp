@@ -166,7 +166,7 @@ public:
 
     void displayEmployees() const {
         char chh;
-        int idd;
+        int id;
         
         if (!hasEmployees()) {
             std::cout << "The employee list is empty." << std::endl;
@@ -176,46 +176,47 @@ public:
         system("CLS");
         Employee* current = head;
         std::cout << "Current Employees" << std::endl;
+        std::cout << "ID\t\tName" << std::endl;
         while (current != nullptr) {
-            std::cout << "ID\t\tName" << std::endl;
             std::cout << current->id << "\t\t" << current->name << std::endl;
             current = current->next;
         }
 
         std::cout << std::endl << std::endl;
-
         std::cout << "[A] Display Employee Details" << std::endl;
         std::cout << "[B] Exit" << std::endl;
 
         std::cin >> chh;
         system("CLS");
+            std::cin.ignore();
+            std::cin.clear();
             switch(toupper(chh)){
                 case 'A':{
-                    while (true) {
-                        std::cout << "Enter Employee ID: ";
-                        std::cin.clear();
-                        std::cin.ignore(100000, '\n');
-                        
+                    while(true){
+                    std::string idStr;
+                    std::cout << "Enter Employee ID: ";
+                    std::getline(std::cin, idStr);
                         try {
-                            std::string answer;
-                            std::getline(std::cin, answer);
-                            idd = std::stoi(answer);
+                            id = std::stoi(idStr);
                             break;
-
-                        } catch (std::exception& e) {
-                            std::cout << "Enter a valid ID number!" << std::endl;
+                        } catch (const std::exception& e) {
+                            std::cout << "Invalid ID Enter Again!" << std::endl;
                             system("PAUSE");
                             system("CLS");
                             continue;
                         }
-                    };
+                    }
                     system("CLS");
-                    searchEmployee(idd);
+                    searchEmployee(id);
                     system("pause");
                     break;
                 }
                 case 'B':{
                 break;
+                }
+                default:{
+                    std::cout << "Invalid Choice" << std::endl;
+                    system("PAUSE");
                 }
             }
             system("CLS");
@@ -489,17 +490,37 @@ public:
                     std::getline(std::cin, bday);
                     std::cout << "Gender: ";
                     std::getline(std::cin, gender);
+                    while(true){
+                    std::string ageStr;
                     std::cout << "Age: ";
-                    std::cin >> age;
-                    std::cin.ignore();
+                    std::getline(std::cin, ageStr);
+                        try {
+                            age = std::stoi(ageStr);
+                            break;
+                        } catch (const std::exception& e) {
+                            std::cout << "Invalid age Enter Again!" << std::endl;
+                            continue;
+                        }
+                    }
                     std::cout << "Civil Status: ";
                     std::getline(std::cin, civil);
                     std::cout << "Position: ";
                     std::getline(std::cin, position);
                     std::cout << "Department: ";
                     std::getline(std::cin, department);
+                    while(status != "FULL TIME" || status != "PART TIME"){
                     std::cout << "Employment Status (FULL TIME or PART TIME): ";
                     std::getline(std::cin, status);
+                    if(status == "FULL TIME"){
+                        break;
+                    }
+                    else if(status == "PART TIME"){
+                        break;
+                    }
+                    else{
+                        continue;
+                    }
+                    }
                     std::cout << "Phone Number: ";
                     std::getline(std::cin, phone);
                     std::cout << "Email Address: ";
@@ -510,16 +531,61 @@ public:
                     std::getline(std::cin, bank);
 
                     if (status == "PART TIME") {
-                        std::cout << "Hourly Salary: ";
-                        std::cin >> salary;
-                        std::cout << "Days of Work: ";
-                        std::cin >> daysOfWork;
-                        std::cout << "Hours of Work: ";
-                        std::cin >> hoursOfWork;
+                    std::cin.ignore();
+                    std::cin.clear();
+                    while(true){
+                    std::string salaryStr;
+                    std::cout << "Salary: ";
+                    std::getline(std::cin, salaryStr);
+                        try {
+                            salary = std::stod(salaryStr);
+                            break;
+                        } catch (const std::exception& e) {
+                            std::cout << "Invalid Salary Enter Again!" << std::endl;
+                            continue;
+                        }
+                    }
+                        while(true){
+                    std::string daysStr;
+                    std::cout << "Days of Work: ";
+                    std::getline(std::cin, daysStr);
+                        try {
+                            daysOfWork = std::stoi(daysStr);
+                            break;
+                        } catch (const std::exception& e) {
+                            std::cout << "Invalid Enter Again!" << std::endl;
+                            continue;
+                        }
+                    }
+                        while(true){
+                    std::string hrStr;
+                    std::cout << "Hours of Work: ";
+                    std::getline(std::cin, hrStr);
+                        try {
+                            hoursOfWork = std::stoi(hrStr);
+                            break;
+                        } catch (const std::exception& e) {
+                            std::cout << "Invalid Enter Again!" << std::endl;
+                            continue;
+                        }
+                    }
                     }
                     else{
+                        std::cin.ignore();
+                        std::cin.clear();
+                        while(true){
+                        std::string salaryStr;
                         std::cout << "Salary: ";
-                        std::cin >> salary;
+                        std::getline(std::cin, salaryStr);
+                            try {
+                                salary = std::stod(salaryStr);
+                                break;
+                            } catch (const std::exception& e) {
+                                std::cout << "Invalid Salary Enter Again!" << std::endl;
+                                system("PAUSE");
+                                continue;
+                            }
+                        }
                     }
 
                     addEmployee(name, bday, gender, age, civil, position, department, status, phone, email, address, bank, salary, daysOfWork, hoursOfWork);
@@ -533,24 +599,22 @@ public:
                         break;
                     }
                     system("CLS");
-                    while (true) {
-                        std::cout << "Enter Employee ID: ";
-                        std::cin.clear();
-                        std::cin.ignore(100000, '\n');
-                        
+                    std::cin.ignore();
+                    std::cin.clear();
+                    while(true){
+                    std::string idStr;
+                    std::cout << "Enter Employee ID: ";
+                    std::getline(std::cin, idStr);
                         try {
-                            std::string answer;
-                            std::getline(std::cin, answer);
-                            id = std::stoi(answer);
+                            id = std::stoi(idStr);
                             break;
-
-                        } catch (std::exception& e) {
-                            std::cout << "Enter a valid ID number!" << std::endl;
+                        } catch (const std::exception& e) {
+                            std::cout << "Invalid ID Enter Again!" << std::endl;
                             system("PAUSE");
                             system("CLS");
                             continue;
                         }
-                    };
+                    }
                     editEmployee(id);
                     std::cout << std::endl << std::endl;
                     system("PAUSE");
@@ -563,24 +627,22 @@ public:
                         break;
                     }
                     system("CLS");
-                    while (true) {
-                        std::cout << "Enter Employee ID: ";
-                        std::cin.clear();
-                        std::cin.ignore(100000, '\n');
-                        
+                    std::cin.ignore();
+                    std::cin.clear();
+                    while(true){
+                    std::string idStr;
+                    std::cout << "Enter Employee ID: ";
+                    std::getline(std::cin, idStr);
                         try {
-                            std::string answer;
-                            std::getline(std::cin, answer);
-                            id = std::stoi(answer);
+                            id = std::stoi(idStr);
                             break;
-
-                        } catch (std::exception& e) {
-                            std::cout << "Enter a valid ID number!" << std::endl;
+                        } catch (const std::exception& e) {
+                            std::cout << "Invalid ID Enter Again!" << std::endl;
                             system("PAUSE");
                             system("CLS");
                             continue;
                         }
-                    };
+                    }
                     deleteEmployee(id);
                     system("PAUSE");
                     break;
@@ -613,24 +675,22 @@ public:
                         break;
                     }
                     system("CLS");
-                    while (true) {
-                        std::cout << "Enter Employee ID: ";
-                        std::cin.clear();
-                        std::cin.ignore(100000, '\n');
-                        
+                    std::cin.ignore();
+                    std::cin.clear();
+                    while(true){
+                    std::string idStr;
+                    std::cout << "Enter Employee ID: ";
+                    std::getline(std::cin, idStr);
                         try {
-                            std::string answer;
-                            std::getline(std::cin, answer);
-                            id = std::stoi(answer);
+                            id = std::stoi(idStr);
                             break;
-
-                        } catch (std::exception& e) {
-                            std::cout << "Enter a valid ID number!" << std::endl;
+                        } catch (const std::exception& e) {
+                            std::cout << "Invalid ID Enter Again!" << std::endl;
                             system("PAUSE");
                             system("CLS");
                             continue;
                         }
-                    };
+                    }
                     displaySalary(id);
                     break;
                 }
@@ -641,24 +701,22 @@ public:
                         break;
                     }
                     system("CLS");
-                    while (true) {
-                        std::cout << "Enter Employee ID: ";
-                        std::cin.clear();
-                        std::cin.ignore(100000, '\n');
-                        
+                    std::cin.ignore();
+                    std::cin.clear();
+                    while(true){
+                    std::string idStr;
+                    std::cout << "Enter Employee ID: ";
+                    std::getline(std::cin, idStr);
                         try {
-                            std::string answer;
-                            std::getline(std::cin, answer);
-                            id = std::stoi(answer);
+                            id = std::stoi(idStr);
                             break;
-
-                        } catch (std::exception& e) {
-                            std::cout << "Enter a valid ID number!" << std::endl;
+                        } catch (const std::exception& e) {
+                            std::cout << "Invalid ID Enter Again!" << std::endl;
                             system("PAUSE");
                             system("CLS");
                             continue;
                         }
-                    };
+                    }
                     double newSalary;
                     std::cout << "Enter New Salary: ";
                     std::cin >> newSalary;
@@ -679,7 +737,6 @@ public:
         std::cout << "ADMIN LOG IN" << std::endl;
         login();
     }
-
 };
 
 int main() {
@@ -688,7 +745,15 @@ int main() {
     EmployeeList employeeList;
 
     employeeList.addEmployee("Juan dela Cruz", "1990-05-15", "Male", 31, "Single", "Software Engineer", "IT Department", "FULL TIME", "09123456789", "juan@example.com", "Manila, Philippines", "0123456789", 50000);
-    //employeeList.addEmployee("Maria Santos", "1995-09-20", "Female", 26, "Married", "Data Analyst", "Finance Department", "PART TIME", "09123456788", "maria@example.com", "Quezon City, Philippines", "9876543210", 30000, 3, 4);
+    employeeList.addEmployee("Maria Santos", "1995-09-20", "Female", 26, "Married", "Data Analyst", "Finance Department", "PART TIME", "09123456788", "maria@example.com", "Quezon City, Philippines", "9876543210", 30000, 3, 4);
+    //employeeList.addEmployee("Vladimir Jocson", "1993-08-10", "Male", 28, "Single", "Senior Software Engineer", "IT Department", "FULL TIME", "09123456789", "vladimir@example.com", "Manila, Philippines", "0123456789", 60000);
+    //employeeList.addEmployee("Sean Briones", "1992-06-25", "Male", 29, "Single", "Marketing Assistant", "Marketing Department", "PART TIME", "09123456788", "sean@example.com", "Quezon City, Philippines", "9876543210", 20000, 3, 20);
+    //employeeList.addEmployee("Alex Penuliar", "1994-12-18", "Male", 27, "Single", "Junior Data Analyst", "Finance Department", "FULL TIME", "09123456787", "alex@example.com", "Makati City, Philippines", "0123456788", 40000);
+    //employeeList.addEmployee("Kobe Capinpin", "1991-04-05", "Male", 32, "Married", "HR Manager", "Human Resources Department", "FULL TIME", "09123456786", "kobe@example.com", "Pasig City, Philippines", "0123456787", 70000);
+    //employeeList.addEmployee("JC Magsino", "1993-11-12", "Female", 28, "Single", "Graphic Designer", "Creative Department", "PART TIME", "09123456785", "jc@example.com", "Taguig City, Philippines", "9876543219", 25000, 2, 15);
+    //employeeList.addEmployee("Belle Mendoza", "1990-02-28", "Female", 31, "Married", "Project Manager", "Project Management Department", "FULL TIME", "09123456784", "belle@example.com", "Manila, Philippines", "0123456786", 80000);
+    //employeeList.addEmployee("Maria Clara", "1996-07-15", "Female", 25, "Single", "Quality Assurance Analyst", "Quality Assurance Department", "PART TIME", "09123456783", "mariaclara@example.com", "Quezon City, Philippines", "9876543218", 22000, 2, 10);
+
 
     do {
         while(!employeeList.isLoggedIn()){
