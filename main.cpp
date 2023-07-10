@@ -694,6 +694,7 @@ public:
                     displaySalary(id);
                     break;
                 }
+                
                 case 'B': {
                     if (!hasEmployees()) {
                         std::cout << "The employee list is empty." << std::endl;
