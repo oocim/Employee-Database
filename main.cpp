@@ -177,7 +177,8 @@ public:
         Employee* current = head;
         std::cout << "Current Employees" << std::endl;
         while (current != nullptr) {
-            std::cout << current->id << ") Name: " << current->name << std::endl;
+            std::cout << "ID\t\tName" << std::endl;
+            std::cout << current->id << "\t\t" << current->name << std::endl;
             current = current->next;
         }
 
@@ -190,8 +191,24 @@ public:
         system("CLS");
             switch(toupper(chh)){
                 case 'A':{
-                    std::cout << "Enter Employee ID" << std::endl;
-                    std::cin >> idd;
+                    while (true) {
+                        std::cout << "Enter Employee ID: ";
+                        std::cin.clear();
+                        std::cin.ignore(100000, '\n');
+                        
+                        try {
+                            std::string answer;
+                            std::getline(std::cin, answer);
+                            idd = std::stoi(answer);
+                            break;
+
+                        } catch (std::exception& e) {
+                            std::cout << "Enter a valid ID number!" << std::endl;
+                            system("PAUSE");
+                            system("CLS");
+                            continue;
+                        }
+                    };
                     system("CLS");
                     searchEmployee(idd);
                     system("pause");
@@ -243,11 +260,6 @@ public:
     }
 
     void editEmployee(int id) {
-        if (!hasEmployees()) {
-            system("CLS");
-            std::cout << "The employee list is empty." << std::endl;
-            return;
-        }
         system("CLS");
         Employee* current = head;
         bool found = false;
@@ -259,7 +271,6 @@ public:
 
                 std::string name;
                 std::cout << "Name: ";
-                std::cin.ignore();
                 std::getline(std::cin, name);
                 if (!name.empty()) {
                     current->name = name;
@@ -440,16 +451,8 @@ public:
     }
 
     void manageEmployee() {
-        if (!isLoggedIn()) {
-            system("CLS");
-            std::cout << "Please login to access employee management." << std::endl;
-            login();
-            if (!isLoggedIn()) {
-                return;
-            }
-        }
-
         char ch;
+        int id;
         do {
             system("CLS");
             std::cout << "Manage Employees" << std::endl << std::endl;
@@ -505,14 +508,18 @@ public:
                     std::getline(std::cin, address);
                     std::cout << "Bank Information: ";
                     std::getline(std::cin, bank);
-                    std::cout << "Salary: ";
-                    std::cin >> salary;
 
                     if (status == "PART TIME") {
+                        std::cout << "Hourly Salary: ";
+                        std::cin >> salary;
                         std::cout << "Days of Work: ";
                         std::cin >> daysOfWork;
                         std::cout << "Hours of Work: ";
                         std::cin >> hoursOfWork;
+                    }
+                    else{
+                        std::cout << "Salary: ";
+                        std::cin >> salary;
                     }
 
                     addEmployee(name, bday, gender, age, civil, position, department, status, phone, email, address, bank, salary, daysOfWork, hoursOfWork);
@@ -522,27 +529,58 @@ public:
                 case 'B': {
                     if (!hasEmployees()) {
                         std::cout << "The employee list is empty." << std::endl;
+                        system("PAUSE");
                         break;
                     }
                     system("CLS");
-                    int id;
-                    std::cout << "Enter Employee ID: ";
-                    std::cin >> id;
+                    while (true) {
+                        std::cout << "Enter Employee ID: ";
+                        std::cin.clear();
+                        std::cin.ignore(100000, '\n');
+                        
+                        try {
+                            std::string answer;
+                            std::getline(std::cin, answer);
+                            id = std::stoi(answer);
+                            break;
+
+                        } catch (std::exception& e) {
+                            std::cout << "Enter a valid ID number!" << std::endl;
+                            system("PAUSE");
+                            system("CLS");
+                            continue;
+                        }
+                    };
                     editEmployee(id);
                     std::cout << std::endl << std::endl;
-                    std::cout << "Employee Information Updated" << std::endl;
                     system("PAUSE");
                     break;
                 }
                 case 'C': {
                     if (!hasEmployees()) {
                         std::cout << "The employee list is empty." << std::endl;
+                        system("PAUSE");
                         break;
                     }
                     system("CLS");
-                    int id;
-                    std::cout << "Enter Employee ID: ";
-                    std::cin >> id;
+                    while (true) {
+                        std::cout << "Enter Employee ID: ";
+                        std::cin.clear();
+                        std::cin.ignore(100000, '\n');
+                        
+                        try {
+                            std::string answer;
+                            std::getline(std::cin, answer);
+                            id = std::stoi(answer);
+                            break;
+
+                        } catch (std::exception& e) {
+                            std::cout << "Enter a valid ID number!" << std::endl;
+                            system("PAUSE");
+                            system("CLS");
+                            continue;
+                        }
+                    };
                     deleteEmployee(id);
                     system("PAUSE");
                     break;
@@ -557,16 +595,8 @@ public:
     }
 
     void managePayroll() {
-        if (!isLoggedIn()) {
-            system("CLS");
-            std::cout << "Please login to access payroll management." << std::endl;
-            login();
-            if (!isLoggedIn()) {
-                return;
-            }
-        }
-
         char ch;
+        int id;
         do {
             system("CLS");
             std::cout << "Manage Payroll" << std::endl << std::endl;
@@ -579,24 +609,56 @@ public:
                 case 'A': {
                     if (!hasEmployees()) {
                         std::cout << "The employee list is empty." << std::endl;
+                        system("PAUSE");
                         break;
                     }
                     system("CLS");
-                    std::cout << "Enter Employee ID: ";
-                    int id;
-                    std::cin >> id;
+                    while (true) {
+                        std::cout << "Enter Employee ID: ";
+                        std::cin.clear();
+                        std::cin.ignore(100000, '\n');
+                        
+                        try {
+                            std::string answer;
+                            std::getline(std::cin, answer);
+                            id = std::stoi(answer);
+                            break;
+
+                        } catch (std::exception& e) {
+                            std::cout << "Enter a valid ID number!" << std::endl;
+                            system("PAUSE");
+                            system("CLS");
+                            continue;
+                        }
+                    };
                     displaySalary(id);
                     break;
                 }
                 case 'B': {
                     if (!hasEmployees()) {
                         std::cout << "The employee list is empty." << std::endl;
+                        system("PAUSE");
                         break;
                     }
                     system("CLS");
-                    std::cout << "Enter Employee ID: ";
-                    int id;
-                    std::cin >> id;
+                    while (true) {
+                        std::cout << "Enter Employee ID: ";
+                        std::cin.clear();
+                        std::cin.ignore(100000, '\n');
+                        
+                        try {
+                            std::string answer;
+                            std::getline(std::cin, answer);
+                            id = std::stoi(answer);
+                            break;
+
+                        } catch (std::exception& e) {
+                            std::cout << "Enter a valid ID number!" << std::endl;
+                            system("PAUSE");
+                            system("CLS");
+                            continue;
+                        }
+                    };
                     double newSalary;
                     std::cout << "Enter New Salary: ";
                     std::cin >> newSalary;
@@ -612,26 +674,36 @@ public:
             system("CLS");
         } while (toupper(ch) != 'C');
     }
+
+    void loginscreen(){
+        std::cout << "ADMIN LOG IN" << std::endl;
+        login();
+    }
+
 };
 
 int main() {
+    system("CLS");
     char choice;
     EmployeeList employeeList;
 
     employeeList.addEmployee("Juan dela Cruz", "1990-05-15", "Male", 31, "Single", "Software Engineer", "IT Department", "FULL TIME", "09123456789", "juan@example.com", "Manila, Philippines", "0123456789", 50000);
     //employeeList.addEmployee("Maria Santos", "1995-09-20", "Female", 26, "Married", "Data Analyst", "Finance Department", "PART TIME", "09123456788", "maria@example.com", "Quezon City, Philippines", "9876543210", 30000, 3, 4);
 
-
     do {
+        while(!employeeList.isLoggedIn()){
+        employeeList.loginscreen();
+        system("PAUSE");
+        system("CLS");
+    }
         system("CLS");
         std::cout << "Employee Database" << std::endl << std::endl;
         std::cout << "Menu" << std::endl << std::endl;
         std::cout << "[A] List of Employees" << std::endl;
         std::cout << "[B] Manage Employees" << std::endl;
         std::cout << "[C] Manage Payroll" << std::endl;
-        std::cout << "[D] Login" << std::endl;
-        std::cout << "[E] Logout" << std::endl;
-        std::cout << "[F] Exit" << std::endl << std::endl;
+        std::cout << "[D] Logout" << std::endl;
+        std::cout << "[E] Exit" << std::endl << std::endl;
         std::cin >> choice;
 
         switch (toupper(choice)) {
@@ -646,14 +718,9 @@ int main() {
                 break;
             case 'D':
                 system("CLS");
-                std::cout << "ADMIN LOG-IN" << std::endl;
-                employeeList.login();
-                break;
-            case 'E':
-                system("CLS");
                 employeeList.logout();       
                 break;
-            case 'F':
+            case 'E':
                 system("CLS");
                 std::cout << "Shutting down..." << std::endl;
                 break;
@@ -663,7 +730,7 @@ int main() {
         }
         system("PAUSE");
         system("CLS");
-    } while (toupper(choice) != 'F');
+    } while (toupper(choice) != 'E');
 
     return 0;
 }
