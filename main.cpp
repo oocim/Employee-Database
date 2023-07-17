@@ -1,6 +1,62 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
+#include <vector>
 #include <limits>
+#include <map>
+#include <iomanip>
+
+class Account {
+public:
+    std::string username;
+    std::string password;
+    std::string accountType;
+
+    Account(const std::string& username, const std::string& password, const std::string& accountType)
+        : username(username), password(password), accountType(accountType) {}
+
+    std::string getAccountType() const {
+        return accountType;
+    }
+};
+
+
+class AccountManager {
+private:
+    std::vector<Account> accounts;
+
+public:
+    AccountManager() {}
+
+    void loadAccountCredentials(const std::string& filename) {
+        std::ifstream file(filename);
+        std::string line;
+
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::string username, password, accountType;
+            if (std::getline(iss, username, ',') && std::getline(iss, password, ',') && std::getline(iss, accountType, ',')) {
+                accounts.push_back(Account(username, password, accountType));
+            }
+        }
+
+        file.close();
+    }
+
+    bool validateLogin(const std::string& username, const std::string& password, const std::string& accountType) {
+        for (const auto& account : accounts) {
+            if (account.username == username && account.password == password && account.accountType == accountType) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+     const std::vector<Account>& getAccounts() const {
+        return accounts;
+    }
+};
 
 class StackNode {
 public:
@@ -62,29 +118,44 @@ private:
         int age;
         std::string civil;
         std::string position;
-        std::string department;
         std::string status;
         std::string phone;
         std::string email;
         std::string address;
         std::string bank;
         double salary;
-        int daysOfWork;
-        int hoursOfWork;
         Employee* next;
 
-        Employee(int id, const std::string& name, const std::string& bday, const std::string& gender, int age, const std::string& civil, const std::string& position, const std::string& department, const std::string& status, const std::string& phone, const std::string& email, const std::string& address, const std::string& bank, double salary, int daysOfWork = 0, int hoursOfWork = 0)
-            : id(id), name(name), bday(bday), gender(gender), age(age), civil(civil), position(position), department(department), status(status), phone(phone), email(email), address(address), bank(bank), salary(salary), daysOfWork(daysOfWork), hoursOfWork(hoursOfWork), next(nullptr) {}
+        Employee(int id, const std::string& name, const std::string& bday, const std::string& gender, int age, const std::string& civil, const std::string& position, const std::string& status, const std::string& phone, const std::string& email, const std::string& address, const std::string& bank, double salary)
+            : id(id), name(name), bday(bday), gender(gender), age(age), civil(civil), position(position), status(status), phone(phone), email(email), address(address), bank(bank), salary(salary), next(nullptr) {}
     };
-
+    std::string currentAccountType;
     Employee* head;
     Employee* tail;
     int nextId;
 
     Stack loginStack;
+    AccountManager accountManager;
+     std::map<std::string, double> positions;
 
 public:
-    EmployeeList() : head(nullptr), tail(nullptr), nextId(1) {}
+    EmployeeList() : head(nullptr), tail(nullptr), nextId(1) {
+        accountManager.loadAccountCredentials("credentials.txt"); 
+        initializePositions();
+    }
+
+    void initializePositions() {
+        positions["Software Engineer"] = 50000.0;
+        positions["Data Scientist"] = 60000.0;
+        positions["Network Administrator"] = 40000.0;
+        positions["UX Designer"] = 45000.0;
+        positions["Database Administrator"] = 45000.0;
+        positions["Cybersecurity Analyst"] = 55000.0;
+        positions["Web Developer"] = 45000.0;
+        positions["IT Manager"] = 70000.0;
+        positions["Product Manager"] = 65000.0;
+        positions["Quality Assurance Engineer"] = 45000.0;
+    }
 
     int getValidIntegerInput(std::istream& inputStream) {
         while (true) {
@@ -120,28 +191,47 @@ public:
         }
     }
 
+    bool checkList(){
+        if (!hasEmployees()) {
+            std::cout << "The employee list is empty." << std::endl;
+            system("PAUSE");
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    
     bool hasEmployees() const {
         return head != nullptr;
     }
 
-    bool validateLogin(const std::string& username, const std::string& password) {
-        return (username == "admin" && password == "password");
+    bool validateLogin(const std::string& username, const std::string& password, const std::string& accountType) {
+        return accountManager.validateLogin(username, password, accountType);
     }
 
     void login() {
         std::string username, password;
+        std::cout << "LOG IN" << std::endl;
         std::cout << "Username: ";
         std::cin >> username;
         std::cout << "Password: ";
         std::cin >> password;
 
-        if (validateLogin(username, password)) {
-            std::cout << "Login successful!" << std::endl;
-            loginStack.push(username);
-        } else {
-            std::cout << "Invalid username or password. Login failed." << std::endl;
+        const std::vector<Account>& accounts = accountManager.getAccounts();
+        for (const auto& account : accounts) {
+            if (account.username == username && account.password == password) {
+                std::cout << "Login successful!" << std::endl;
+                currentAccountType = account.getAccountType();
+                loginStack.push(username);
+                return;
+            }
         }
+
+        std::cout << "Invalid username or password. Login failed." << std::endl;
     }
+
+
 
     bool isLoggedIn() {
         return !loginStack.isEmpty();
@@ -156,8 +246,22 @@ public:
         }
     }
 
-    void addEmployee(const std::string& name, const std::string& bday, const std::string& gender, int age, const std::string& civil, const std::string& position, const std::string& department, const std::string& status, const std::string& phone, const std::string& email, const std::string& address, const std::string& bank, double salary, int daysOfWork = 0, int hoursOfWork = 0) {
-        Employee* newEmployee = new Employee(nextId, name, bday, gender, age, civil, position, department, status, phone, email, address, bank, salary, daysOfWork, hoursOfWork);
+    void addEmployee(const std::string& name, const std::string& bday, const std::string& gender, int age, const std::string& civil, const std::string& position, const std::string& status, const std::string& phone, const std::string& email, const std::string& address, const std::string& bank) {
+        double salary;
+        if(status != "Full Time"){
+            salary = 0;
+        }
+        else{
+            if (positions.find(position) == positions.end()) {
+            std::cout << "Invalid position. Employee not added." << std::endl;
+            return;
+        }
+
+        salary = positions[position];
+        }
+        
+        
+        Employee* newEmployee = new Employee(nextId, name, bday, gender, age, civil, position, status, phone, email, address, bank, salary);
         nextId++;
 
         if (head == nullptr) {
@@ -203,8 +307,7 @@ public:
         char chh;
         int id;
         
-        if (!hasEmployees()) {
-            std::cout << "The employee list is empty." << std::endl;
+        if(!checkList()){
             return;
         }
         do{
@@ -234,6 +337,7 @@ public:
                     break;
                 }
                 case 'B':{
+                return;
                 break;
                 }
                 default:{
@@ -259,17 +363,12 @@ public:
                 std::cout << "Gender: " << current->gender << std::endl << std::endl;
                 std::cout << "Age: " << current->age << std::endl << std::endl;
                 std::cout << "Civil Status: " << current->civil << std::endl << std::endl;
-                std::cout << "Position: " << current->position << std::endl << std::endl;
-                std::cout << "Department: " << current->department << std::endl << std::endl;
-                std::cout << "Employment Status: " << current->status << std::endl << std::endl;
                 std::cout << "Phone Number: " << current->phone << std::endl << std::endl;
                 std::cout << "Email Address: " << current->email << std::endl << std::endl;
                 std::cout << "Address: " << current->address << std::endl << std::endl;
                 std::cout << "Bank Information: " << current->bank << std::endl << std::endl;
-                if (current->status == "PART TIME") {
-                    std::cout << "Days of Work: " << current->daysOfWork << std::endl << std::endl;
-                    std::cout << "Hours of Work: " << current->hoursOfWork << std::endl << std::endl;
-                }
+                std::cout << "Position: " << current->position << std::endl << std::endl;
+                std::cout << "Employment Status: " << current->status << std::endl << std::endl;
 
                 found = true;
                 break;
@@ -336,19 +435,23 @@ public:
                 std::cout << "Position: ";
                 std::getline(std::cin, position);
                 if (!position.empty()) {
-                    current->position = position;
-                }
-
-                std::string department;
-                std::cout << "Department: ";
-                std::getline(std::cin, department);
-                if (!department.empty()) {
-                    current->department = department;
+                    if (positions.find(position) == positions.end()) {
+                        std::cout << "Invalid position. Position not updated." << std::endl;
+                    } else {
+                        current->position = position;
+                        current->salary = positions[position];
+                    }
                 }
 
                 std::string status;
                 std::cout << "Employment Status: ";
-                std::getline(std::cin, status);
+                while (status != "Full Time" && status != "Part Time") {
+                        std::cout << "Employment Status (Full Time or Part Time): " << std::endl;
+                        std::getline(std::cin, status);
+                        if (status != "Full Time" && status != "Part Time") {
+                            std::cout << "Please enter either 'Full Time' or 'Part Time'";
+                        }
+                    }
                 if (!status.empty()) {
                     current->status = status;
                 }
@@ -381,13 +484,6 @@ public:
                     current->bank = bank;
                 }
 
-                if (current->status == "PART TIME") {
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    current->daysOfWork = getValidIntegerInput(std::cin);
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    current->hoursOfWork = getValidIntegerInput(std::cin);
-                }
-
                 found = true;
                 break;
             }
@@ -416,14 +512,21 @@ public:
     void displaySalary(int id) const {
         Employee* current = head;
         bool found = false;
+        int hours;
+        int rate;
 
         while (current != nullptr) {
             if (current->id == id) {
                 double payroll;
-                if (current->status == "FULL TIME") {
+                if (current->status == "Full Time") {
                     payroll = current->salary;
-                } else if (current->status == "PART TIME") {
-                    payroll = current->salary * current->daysOfWork * current->hoursOfWork;
+                }
+                else if(current->status == "Part Time"){
+                    std::cout << "Enter Hours Worked: "  << std::endl;
+                    std::cin >> hours;
+                    std::cout << "Enter Hourly Rate: " << std::endl;
+                    std::cin >> rate;
+                    payroll = rate * hours;
                 }
                 double SSS = payroll * 0.025;
                 double PhilHealth = payroll * 0.015;
@@ -448,17 +551,17 @@ public:
                 }
 
                 double netSalary = taxableSalary - tax;
-
                 std::cout << "Payroll for Employee ID " << id << ":" << std::endl;
-                std::cout << "Gross Salary: " << payroll << std::endl;
-                std::cout << "Deductions:" << std::endl;
-                std::cout << "\tSSS: " << SSS << std::endl;
-                std::cout << "\tPhilHealth: " << PhilHealth << std::endl;
-                std::cout << "\tPagIbig: " << PagIbig << std::endl;
-                std::cout << "Total Deductions: " << deductions << std::endl;
-                std::cout << "Taxable Salary: " << taxableSalary << std::endl;
-                std::cout << "Tax: " << tax << std::endl;
-                std::cout << "Net Salary: " << netSalary << std::endl;
+                std::cout << "Employee: " << current->name << std::endl;
+                std::cout << "Gross Salary: " << std::fixed << std::setprecision(2) << payroll << std::endl;
+                std::cout << "Deductions:" << std::fixed << std::setprecision(2) << std::endl;
+                std::cout << "\tSSS: " << std::fixed << std::setprecision(2) << SSS << std::endl;
+                std::cout << "\tPhilHealth: " << std::fixed << std::setprecision(2) << PhilHealth << std::endl;
+                std::cout << "\tPagIbig: " << std::fixed << std::setprecision(2) << PagIbig << std::endl;
+                std::cout << "Total Deductions: " << std::fixed << std::setprecision(2) << deductions << std::endl;
+                std::cout << "Taxable Salary: " << std::fixed << std::setprecision(2) << taxableSalary << std::endl;
+                std::cout << "Tax: " << std::fixed << std::setprecision(2) << tax << std::endl;
+                std::cout << "Net Salary: " << std::fixed << std::setprecision(2) << netSalary << std::endl;
 
                 found = true;
                 break;
@@ -474,6 +577,11 @@ public:
     }
 
     void manageEmployee() {
+        if (currentAccountType != "HR") {
+            std::cout << "Access denied. Only HR accounts can manage employees." << std::endl;
+            system("PAUSE");
+            return;
+        }
         char ch;
         int id;
         do {
@@ -481,8 +589,9 @@ public:
             std::cout << "Manage Employees" << std::endl << std::endl;
             std::cout << "[A] Add Employee" << std::endl;
             std::cout << "[B] Edit Employee Information" << std::endl;
-            std::cout << "[C] Fire Employee" << std::endl;
-            std::cout << "[D] Back" << std::endl << std::endl;
+            std::cout << "[C] Remove Employee" << std::endl;
+            std::cout << "[D] View Employees" << std::endl;
+            std::cout << "[E] Back" << std::endl << std::endl;
             std::cin >> ch;
 
             switch (toupper(ch)) {
@@ -497,7 +606,6 @@ public:
                     int age;
                     std::string civil;
                     std::string position;
-                    std::string department;
                     std::string status;
                     std::string phone;
                     std::string email;
@@ -517,18 +625,6 @@ public:
                     age = getValidIntegerInput(std::cin);
                     std::cout << "Civil Status: " << std::endl;
                     std::getline(std::cin, civil);
-                    std::cout << "Position: " << std::endl;
-                    std::getline(std::cin, position);
-                    std::cout << "Department: " << std::endl;
-                    std::getline(std::cin, department);
-
-                    while (status != "FULL TIME" && status != "PART TIME") {
-                        std::cout << "Employment Status (FULL TIME or PART TIME): " << std::endl;
-                        std::getline(std::cin, status);
-                        if (status != "FULL TIME" && status != "PART TIME") {
-                            std::cout << "Invalid status. Please enter either 'FULL TIME' or 'PART TIME'." << std::endl;
-                        }
-                    }
 
                     std::cout << "Phone Number: " << std::endl;
                     std::getline(std::cin, phone);
@@ -539,31 +635,28 @@ public:
                     std::cout << "Bank Information: " << std::endl;
                     std::getline(std::cin, bank);
 
-                    if (status == "PART TIME") {
-                        std::cout << "Salary: " << std::endl;
-                        salary = getValidDoubleInput(std::cin);
+                    std::cout << "Position: " << std::endl;
+                    std::getline(std::cin, position);
 
-                        std::cout << "Hours of Work: " << std::endl;
-                        hoursOfWork = getValidIntegerInput(std::cin);
-
-                        std::cout << "Days of Work: " << std::endl;
-                        daysOfWork = getValidIntegerInput(std::cin);
-                    } else {
-                        std::cout << "Salary: " << std::endl;
-                        salary = getValidDoubleInput(std::cin);
+                    while (status != "Full Time" && status != "Part Time") {
+                        std::cout << "Employment Status (Full Time or Part Time): " << std::endl;
+                        std::getline(std::cin, status);
+                        if (status != "Full Time" && status != "Part Time") {
+                            std::cout << "Please enter either 'Full Time' or 'Part Time'";
+                        }
                     }
 
-                    addEmployee(name, bday, gender, age, civil, position, department, status, phone, email, address, bank, salary, daysOfWork, hoursOfWork);
+
+                    addEmployee(name, bday, gender, age, civil, position, status, phone, email, address, bank);
                     std::cout << "Employee Added Successfully!" << std::endl;
                     system("PAUSE");
                     break;
                 }
                 case 'B': {
-                    if (!hasEmployees()) {
-                        std::cout << "The employee list is empty." << std::endl;
-                        system("PAUSE");
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    if(!checkList()){
                         break;
-                    }
+                    };
                     system("CLS");
                     std:: cout << "Enter ID: " << std::endl;
                     id = getValidIntegerInput(std::cin);
@@ -573,11 +666,10 @@ public:
                     break;
                 }
                 case 'C': {
-                    if (!hasEmployees()) {
-                        std::cout << "The employee list is empty." << std::endl;
-                        system("PAUSE");
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    if(!checkList()){
                         break;
-                    }
+                    };
                     system("CLS");
                     std:: cout << "Enter ID: " << std::endl;
                     id = getValidIntegerInput(std::cin);
@@ -585,16 +677,27 @@ public:
                     system("PAUSE");
                     break;
                 }
-                case 'D':
+                case 'D':{
+                    displayEmployees();
+                    break;
+                }
+                case 'E':
+                    return;
                     break;
                 default:
                     std::cout << "Invalid option selected!" << std::endl;
+                    system("PAUSE");
             }
             system("CLS");
         } while (toupper(ch) != 'D');
     }
 
     void managePayroll() {
+        if (currentAccountType != "Payroll") {
+            std::cout << "Access denied. Only payroll accounts can manage payroll." << std::endl;
+            system("PAUSE");
+            return;
+        }
         char ch;
         int id;
         do {
@@ -607,11 +710,10 @@ public:
 
             switch (toupper(ch)) {
                 case 'A': {
-                    if (!hasEmployees()) {
-                        std::cout << "The employee list is empty." << std::endl;
-                        system("PAUSE");
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    if(!checkList()){
                         break;
-                    }
+                    };
                     system("CLS");
                     std:: cout << "Enter ID: " << std::endl;
                     id = getValidIntegerInput(std::cin);
@@ -619,11 +721,10 @@ public:
                     break;
                 }
                 case 'B': {
-                    if (!hasEmployees()) {
-                        std::cout << "The employee list is empty." << std::endl;
-                        system("PAUSE");
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    if(!checkList()){
                         break;
-                    }
+                    };
                     system("CLS");
                     std:: cout << "Enter ID: " << std::endl;
                     id = getValidIntegerInput(std::cin);
@@ -634,19 +735,17 @@ public:
                     break;
                 }
                 case 'C':
+                    return;
                     break;
                 default:
                     std::cout << "Invalid option selected!" << std::endl;
+                    system("PAUSE");
                     break;
             }
             system("CLS");
         } while (toupper(ch) != 'C');
     }
 
-    void loginscreen(){
-        std::cout << "ADMIN LOG IN" << std::endl;
-        login();
-    }
 };
 
 int main() {
@@ -654,58 +753,43 @@ int main() {
     char choice;
     EmployeeList employeeList;
 
-    employeeList.addEmployee("Juan dela Cruz", "1990-05-15", "Male", 31, "Single", "Software Engineer", "IT Department", "FULL TIME", "09123456789", "juan@example.com", "Manila, Philippines", "0123456789", 50000);
-    employeeList.addEmployee("Maria Santos", "1995-09-20", "Female", 26, "Married", "Data Analyst", "Finance Department", "PART TIME", "09123456788", "maria@example.com", "Quezon City, Philippines", "9876543210", 30000, 3, 4);
-    //employeeList.addEmployee("Vladimir Jocson", "1993-08-10", "Male", 28, "Single", "Senior Software Engineer", "IT Department", "FULL TIME", "09123456789", "vladimir@example.com", "Manila, Philippines", "0123456789", 60000);
-    //employeeList.addEmployee("Sean Briones", "1992-06-25", "Male", 29, "Single", "Marketing Assistant", "Marketing Department", "PART TIME", "09123456788", "sean@example.com", "Quezon City, Philippines", "9876543210", 20000, 3, 20);
-    //employeeList.addEmployee("Alex Penuliar", "1994-12-18", "Male", 27, "Single", "Junior Data Analyst", "Finance Department", "FULL TIME", "09123456787", "alex@example.com", "Makati City, Philippines", "0123456788", 40000);
-    //employeeList.addEmployee("Kobe Capinpin", "1991-04-05", "Male", 32, "Married", "HR Manager", "Human Resources Department", "FULL TIME", "09123456786", "kobe@example.com", "Pasig City, Philippines", "0123456787", 70000);
-    //employeeList.addEmployee("JC Magsino", "1993-11-12", "Female", 28, "Single", "Graphic Designer", "Creative Department", "PART TIME", "09123456785", "jc@example.com", "Taguig City, Philippines", "9876543219", 25000, 2, 15);
-    //employeeList.addEmployee("Belle Mendoza", "1990-02-28", "Female", 31, "Married", "Project Manager", "Project Management Department", "FULL TIME", "09123456784", "belle@example.com", "Manila, Philippines", "0123456786", 80000);
-    //employeeList.addEmployee("Maria Clara", "1996-07-15", "Female", 25, "Single", "Quality Assurance Analyst", "Quality Assurance Department", "PART TIME", "09123456783", "mariaclara@example.com", "Quezon City, Philippines", "9876543218", 22000, 2, 10);
-
-
     do {
         while(!employeeList.isLoggedIn()){
-        employeeList.loginscreen();
+        employeeList.login();
         system("PAUSE");
         system("CLS");
     }
         system("CLS");
-        std::cout << "Employee Database" << std::endl << std::endl;
+        std::cout << "Tech Company" << std::endl << std::endl;
         std::cout << "Menu" << std::endl << std::endl;
-        std::cout << "[A] List of Employees" << std::endl;
-        std::cout << "[B] Manage Employees" << std::endl;
-        std::cout << "[C] Manage Payroll" << std::endl;
-        std::cout << "[D] Logout" << std::endl;
-        std::cout << "[E] Exit" << std::endl << std::endl;
+        std::cout << "[A] Human Resources" << std::endl;
+        std::cout << "[B] Payroll" << std::endl;
+        std::cout << "[C] Logout" << std::endl;
+        std::cout << "[D] Exit" << std::endl << std::endl;
         std::cin >> choice;
 
         switch (toupper(choice)) {
             case 'A':
-                employeeList.displayEmployees();
-                break;
-            case 'B':
                 employeeList.manageEmployee();
                 break;
-            case 'C':
+            case 'B':
                 employeeList.managePayroll();
                 break;
-            case 'D':
+            case 'C':
                 system("CLS");
                 employeeList.logout();       
                 break;
-            case 'E':
+            case 'D':
                 system("CLS");
                 std::cout << "Shutting down..." << std::endl;
                 break;
             default:
                 std::cout << "Invalid option selected!" << std::endl;
+                system("PAUSE");
                 break;
         }
-        system("PAUSE");
         system("CLS");
-    } while (toupper(choice) != 'E');
+    } while (toupper(choice) != 'D');
 
     return 0;
 }
